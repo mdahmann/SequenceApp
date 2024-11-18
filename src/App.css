@@ -1,0 +1,560 @@
+:root {
+  --primary: #89B5AF;    /* Soft sage green */
+  --secondary: #DAE5D0;  /* Light sage */
+  --accent: #FAFAFA;     /* Off white */
+  --text: #2D4356;      /* Deep blue-grey */
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+.App {
+  text-align: center;
+  background-color: var(--accent);
+  min-height: 100vh;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;  /* Modern, clean font */
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  box-shadow: 0 4px 6px var(--shadow);
+}
+
+.App-link {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.App-link:hover {
+  color: var(--text);
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* If you have any buttons, you can style them like this: */
+button {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Form Elements Styling */
+.filters-section {
+  background-color: var(--accent);
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px var(--shadow);
+  max-width: 500px;
+  margin: 2rem auto;
+  transition: all 0.3s ease;
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 1000px; /* Adjust based on your content */
+  overflow: hidden;
+}
+
+.filters-section.hidden {
+  opacity: 0;
+  transform: translateY(-20px);
+  max-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+label {
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: block;
+  text-align: left;
+}
+
+select, textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid var(--secondary);
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: white;
+  color: var(--text);
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
+}
+
+select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(137, 181, 175, 0.2);
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+  font-family: 'Inter', sans-serif;
+}
+
+.sequence-display {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.pose-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.pose-card {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  min-height: 300px;
+  transition: all 0.5s ease;
+}
+
+.pose-image {
+  width: 300px;
+  height: 300px;
+  flex-shrink: 0;
+}
+
+.pose-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pose-content {
+  flex-grow: 1;
+  padding: 2rem;
+  position: relative;
+}
+
+/* Timeline Progress Bar */
+.progress-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, 
+    rgba(137, 181, 175, 0.1) 0%,
+    rgba(137, 181, 175, 0.1) var(--progress),
+    transparent var(--progress),
+    transparent 100%
+  );
+  pointer-events: none;
+  transition: --progress 1s linear;
+}
+
+/* Timer Display */
+.timer-display {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: var(--primary);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+/* Controls */
+.sequence-controls {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 0.5rem 2rem 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.sequence-timers {
+  display: flex;
+  gap: 2rem;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.total-time,
+.elapsed-time {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.time-label {
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.time-value {
+  font-family: monospace;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.playback-controls {
+  display: flex;
+  gap: 1rem;
+}
+
+.control-button {
+  background: transparent;
+  color: var(--text);
+  border: none;
+  padding: 0.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.control-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.control-button:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
+  transform: scale(1.1);
+}
+
+/* Progress bar (optional) */
+.sequence-progress {
+  width: 100%;
+  height: 4px;
+  background: var(--secondary);
+  cursor: pointer;
+  position: relative;
+  margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.1s linear;
+  position: relative;
+}
+
+.progress-bar::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: -4px;
+  width: 12px;
+  height: 12px;
+  background: var(--primary);
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform 0.2s ease;
+}
+
+.sequence-progress:hover .progress-bar::after {
+  transform: scale(1);
+}
+
+/* Controls layout */
+.player-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 1rem;
+}
+
+.playback-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.time-display {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: var(--text);
+  opacity: 0.9;
+}
+
+.time-separator {
+  margin: 0 4px;
+  opacity: 0.5;
+}
+
+/* Button styling */
+.control-button {
+  background: transparent;
+  color: var(--text);
+  border: none;
+  padding: 0.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.control-button:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.05);
+  transform: scale(1.1);
+}
+
+.control-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.play-button {
+  width: 45px;
+  height: 45px;
+  font-size: 1.2rem;
+}
+
+.active-pose {
+  border: 2px solid var(--primary);
+}
+
+.pose-card:hover .pose-image img {
+  transform: scale(1.05);
+}
+
+.pose-content h3 {
+  color: var(--text);
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+}
+
+.pose-content .sanskrit {
+  color: var(--primary);
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.pose-content .duration {
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 1rem;
+}
+
+.pose-content .description {
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* Responsive layout */
+@media (min-width: 768px) {
+  .pose-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .pose-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.generated-sequence {
+  text-align: left;
+}
+
+.generated-sequence h2 {
+  color: var(--text);
+  margin-bottom: 1.5rem;
+}
+
+.generated-sequence pre {
+  background-color: var(--accent);
+  padding: 1.5rem;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 2rem auto;
+}
+
+.loading-spinner div {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--primary);
+  animation: loading-spinner 1.2s linear infinite;
+}
+
+.loading-spinner div:nth-child(1) {
+  top: 8px;
+  left: 8px;
+  animation-delay: 0s;
+}
+
+.loading-spinner div:nth-child(2) {
+  top: 8px;
+  left: 32px;
+  animation-delay: -0.4s;
+}
+
+.loading-spinner div:nth-child(3) {
+  top: 8px;
+  left: 56px;
+  animation-delay: -0.8s;
+}
+
+@keyframes loading-spinner {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.7);
+  }
+}
+
+/* Edit Button */
+.edit-sequence-button {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 100;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.edit-sequence-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px var(--shadow);
+}
+
+/* Fullscreen Mode */
+.sequence-display.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--accent);
+  z-index: 1000;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.sequence-display.fullscreen .pose-card {
+  opacity: 0.5;
+  transform: scale(0.98);
+  transition: all 0.3s ease;
+}
+
+.sequence-display.fullscreen .pose-card.active-pose {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Exit Fullscreen Button */
+.exit-fullscreen {
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 10px var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.exit-fullscreen:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px var(--shadow);
+}
+
+/* Fullscreen overlay background */
+.sequence-display.fullscreen {
+  background: var(--accent);
+}
+
+/* Smooth transition for entering/exiting fullscreen */
+.sequence-display {
+  transition: all 0.3s ease;
+}
