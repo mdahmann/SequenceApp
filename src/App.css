@@ -617,3 +617,40 @@ body {
     grid-template-columns: repeat(3, 1fr); /* Three columns on larger screens */
   }
 }
+
+/* Centering titles and loading spinner */
+.app-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2rem; /* Add some space below the header */
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem auto; /* Center the spinner */
+}
+
+/* Loading Spinner Animation */
+.loading-spinner div {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--primary);
+  animation: breathing 1.5s ease-in-out infinite; /* Breathing animation */
+}
+
+@keyframes breathing {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 1;
+  }
+}

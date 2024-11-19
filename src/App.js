@@ -101,6 +101,7 @@ const App = () => {
   const handleGenerateSequence = async () => {
     try {
       setIsLoading(true);
+      setShowFilters(false);
       console.log('Starting sequence generation...'); // Debug log 1
       
       if (!process.env.REACT_APP_OPENAI_API_KEY) {
