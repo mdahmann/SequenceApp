@@ -101,7 +101,14 @@ const App = () => {
   const handleGenerateSequence = async () => {
     try {
       setIsLoading(true);
+      console.log('Starting sequence generation...'); // Debug log 1
       
+      if (!process.env.REACT_APP_OPENAI_API_KEY) {
+        console.log('API Key missing'); // Debug log 2
+        throw new Error('OpenAI API key is missing');
+      }
+
+      console.log('Making API request...'); // Debug log 3
       const response = await axios.post('https://api.openai.com/v1/chat/completions', {
         model: "gpt-3.5-turbo",
         messages: [{
@@ -112,12 +119,15 @@ const App = () => {
             Yoga Style: ${style}
             Custom Request: ${customPrompt}
             
-            Please return the response as a JSON array of poses, where each pose has:
-            - name: the name of the pose (use common English names)
-            - sanskrit: the Sanskrit name
-            - duration: how long to hold it
-            - description: brief instructions
-            Format: [{"name": "pose name", "sanskrit": "sanskrit name", "duration": "duration", "description": "description"}]`
+            Please return ONLY a JSON array of poses in this exact format, with no additional text or explanation:
+            [
+              {
+                "name": "pose name",
+                "sanskrit": "sanskrit name",
+                "duration": "X min",
+                "description": "brief instructions"
+              }
+            ]`
         }]
       }, {
         headers: {
@@ -126,28 +136,59 @@ const App = () => {
         }
       });
 
-      const poseSequence = JSON.parse(response.data.choices[0].message.content);
-      
-      // Fetch images for each pose
-      const posesWithImages = await Promise.all(
-        poseSequence.map(async (pose) => {
-          const poseData = await fetchPoseImage(pose.name);
-          return {
-            ...pose,
-            imageUrl: poseData?.png || placeholderImage,
-            sanskrit: poseData?.sanskrit || pose.sanskrit,
-            benefits: poseData?.benefits || pose.description
-          };
-        })
-      );
-      
-      setPoses(posesWithImages);
-      setShowFilters(false); // Hide filters after generation
+      console.log('API Response received:', response.data); // Debug log 4
+      console.log('Raw content:', response.data.choices[0].message.content); // Debug log 5
+
+      let poseSequence;
+      try {
+        poseSequence = JSON.parse(response.data.choices[0].message.content);
+        console.log('Parsed sequence:', poseSequence); // Debug log 6
+        
+        if (!Array.isArray(poseSequence)) {
+          console.log('Response is not an array:', typeof poseSequence); // Debug log 7
+          throw new Error('Response is not an array');
+        }
+        
+        if (poseSequence.length === 0) {
+          console.log('Empty pose sequence'); // Debug log 8
+          throw new Error('No poses returned');
+        }
+
+        console.log('Fetching images...'); // Debug log 9
+        const posesWithImages = await Promise.all(
+          poseSequence.map(async (pose) => {
+            console.log('Fetching image for:', pose.name); // Debug log 10
+            const poseData = await fetchPoseImage(pose.name);
+            return {
+              ...pose,
+              imageUrl: poseData?.png || placeholderImage,
+              sanskrit: poseData?.sanskrit || pose.sanskrit,
+              benefits: poseData?.benefits || pose.description
+            };
+          })
+        );
+        
+        console.log('Final poses with images:', posesWithImages); // Debug log 11
+        setPoses(posesWithImages);
+        setShowFilters(false);
+        
+      } catch (parseError) {
+        console.error('Error parsing response:', parseError);
+        console.error('Raw response:', response.data.choices[0].message.content);
+        alert('Error: The API response was not in the expected format. Please try again.');
+        return;
+      }
     } catch (error) {
-      console.error('Error:', error);
-      if (error.response) {
-        console.error('Response data:', error.response.data);
-        console.error('Response status:', error.response.status);
+      console.error('Error details:', {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data
+      });
+      
+      if (error.response?.status === 401) {
+        alert('Authentication failed. Please check if the API key is properly configured.');
+      } else {
+        alert(`Error: ${error.message}`);
       }
     } finally {
       setIsLoading(false);
